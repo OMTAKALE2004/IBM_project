@@ -1,10 +1,13 @@
 from flask import Flask, request, render_template, redirect, url_for, flash
 import requests
+from dotenv import load_dotenv
+import os
+load_dotenv()
+API_KEY=os.getenv('API_KEY')
 
 app = Flask(__name__)
 
-# NOTE: you must manually set API_KEY below using information retrieved from your IBM Cloud account
-API_KEY = "_RPuK6GR7-XUODPu07GZHUOsUT0t0EVZ_AZQicy5NZFc"
+
 
 @app.route('/')
 def home():
