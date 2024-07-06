@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+DE+Grund:wght@100..400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+:root{
+    --bgcolor:#FDFDFD;
+    --primaryColor:black;
+    --headerFont:"Playwrite DE Grund", cursive;
+    --primaryFont:"Roboto Mono", monospace;
+}
+body{
+    .container{
+        width: 100vw;
+        height: 100vh;
+        background-color: var(--bgcolor);
+    }
+}
+
+
+.container{
+    overflow: hidden;
+    .header{
+        padding: 1rem 1rem 1rem 3rem;
+    }
+
+    /* display: flex; */
+    /* justify-content: center; */
+}
+.mainContent{
+    display: flex;
+    justify-content: center;
+}
+
+.res{
+    width: 40vw;
+    height: 50vh;
+    border: 1px solid black;
+    border-radius: 1rem;
+    font-size: 1.6rem;
+    font-family: var(--primaryFont);
+    font-weight: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    h4{
+        margin-bottom: 2rem;
+        margin-left: 1rem;
+    }
+    button{
+        width: 7vw;
+        height: 5vh;
+        font-size: 1.2rem;
+        font-family: var(--primaryFont);
+        background-color: transparent;
+        border: .4px solid black;
+        border-radius: .4rem;
+        a{
+            text-decoration: none;
+            color: black;
+
+        }
+    }
+}

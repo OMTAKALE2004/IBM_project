@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+DE+Grund:wght@100..400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+:root{
+    --bgcolor:#FDFDFD;
+    --primaryColor:black;
+    --headerFont:"Playwrite DE Grund", cursive;
+    --primaryFont:"Roboto Mono", monospace;
+}
+body{
+    .container{
+        width: 100vw;
+        height: 100vh;
+        background-color: var(--bgcolor);
+    }
+}
+
+
+.container{
+    overflow: hidden;
+    .header{
+        padding: 1rem 1rem 1rem 3rem;
+    }
+
+    /* display: flex; */
+    /* justify-content: center; */
+    .mainContent{
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        
+        
+        
+    }
+}
+
+
+form{
+    width: 50vw;
+    height: 75vh;
+    padding: 2rem;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    .parameter{
+        display: flex;
+        margin-bottom: 1rem;
+        font-family: var(--primaryFont);
+    }
+    .para1{
+        .gender{
+            margin-right: 13rem;
+            display: flex;
+            input{
+                width: 1.3rem;
+                height: 1rem;
+            }
+            /* flex-direction: column; */
+            align-items: center;
+            /* padding-left: 1rem; */
+            h3{
+                margin-right: 1rem;
+
+            }
+            label{
+                margin-right: 1rem;
+            }
+        }
+    }
+    .para2{
+        .cpt{
+            margin-right: 18rem;
+        }
+    }
+    .para3{
+        .ch{
+            margin-right: 14rem;
+        }
+    }
+    .para4{
+        .recg{
+            margin-right: 19rem;
+        }
+    }
+    .para5{
+        input{
+            width: 1.3rem;
+            height: 1rem;
+        }
+        .exang{
+            margin-right: 17rem;
+        }
+    }
+
+    input[type=number],input[type=text]{
+        width: 15vw;
+        height: 5vh;
+        border-radius: 2rem;
+        border: .2px solid black;
+    }
+    select{
+        width: 10vw;
+        height: 5vh;
+        font-size: 1rem;
+        font-family: var(--primaryFont);
+        border-radius: 2rem;
+        letter-spacing: 2px;
+
+        option{
+            letter-spacing: 2px;
+            background-color: rgb(186, 181, 181);
+
+        }
+        
+
+    }
+
+}
+.buttonDiv{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* background-color: red; */
+
+    height: 10vh;
+    .button{
+        cursor: pointer;
+        width: 8vw;
+        height: 6vh;
+        border: 1px solid black;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-family: var(--primaryFont);
+        background-color: white;
+    }
+}

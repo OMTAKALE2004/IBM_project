@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+DE+Grund:wght@100..400&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+}
+:root{
+    --primaryFont:"Roboto Mono", monospace;
+    --headerFont:"Playwrite DE Grund", cursive;
+}
+.container{
+    width: 100vw;
+    height: 100vh;
+}
+.container{
+    overflow: hidden;
+    .header{
+        padding: 1rem 1rem 1rem 3rem;
+    }
+    .mainContent{
+        display: flex;
+        
+    }
+}
+.container{
+    .mainContent{
+        height: 100%;
+        display: flex;
+        /* background-color: black; */
+        justify-content: space-evenly;
+        /* align-items: center; */
+        .card{
+            /* background-color: red; */
+            height: 50vh;
+            display: flex;
+            flex-direction: column;
+            align-items:center;
+
+            span{
+                font-size: 2rem;
+                font-family: var(--headerFont);
+            }
+        }
+        .diabetes,.cancer,.heartDis{
+            cursor: pointer;
+            width: 20vw;
+            height: 40vh;
+            border: 1px solid black;
+            border-radius: 3px;
+        }
+    }
+}
+
+.container{
+    .mainContent{
+        .diabetes{
+            img{
+                width: 19vw;
+                  height: 39vh;  
+            }
+        }
+        .cancer{
+            img{
+                width: 18vw;
+                height: 38vh
+            }
+        }
+        .heartDis{
+            img{
+                width: 18vw;
+                height: 38vh;
+            }
+        }
+    }
+}

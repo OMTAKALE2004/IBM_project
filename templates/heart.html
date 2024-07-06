@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>heart Disease Assessment</title>
+    <link rel="stylesheet" href="../static/styles/heart.css">
+</head>
+<body>
+    <div class="main">
+        <div class="container">
+            <div class="header">
+                <img src="../static/styles/asset/logoHospital-svg.svg" alt="logo">
+            </div>
+            <div class="mainContent">
+                <form method="post", action="/predictt">
+                    
+                    <div class="para1 parameter">
+                        <div class="gender">
+                            <h3>Gender</h3>
+                            <input type="radio" name="Gender" id="male" value="M" ><label for="male">male</label>
+                            <input type="radio" name="Gender" id="female" value="F" ><label for="female">female</label>
+                            <!-- <input type="text" name="gender" id="gender"><label for="gender">Enter 'M' for Male and 'F' for Female</label> -->
+                        </div>
+                        <div class="Age">
+                            <h3>Age</h3>
+                            <input type="number" name="Age" id="Age">
+                            </div>
+                    </div>
+
+                    <div class="para2 parameter">
+                        <div class="cpt">
+                            <h3>Chest Pain Type</h3>
+                            <!-- <input type="text" name="cpt",id="cpt"> -->
+                             <select name="cpt" id="cpt">
+                                <option value="ATA">ATA</option>
+                                <option value="NAP">NAP</option>
+                                <option value="ASY">ASY</option>
+                                <option value="TA">TA</option>
+                             </select>
+                        </div>
+                        <div class="rbp">
+                            <h3>Resting BP</h3>
+                            <input type="number" name="rbp" id="rbp">
+                        </div>
+                    </div>
+                    <div class="para3 parameter">
+                        <div class="ch">
+                            <h3>Cholestrol</h3>
+                            <input type="number" name="chl" id="chl">
+                        </div>
+                        <div class="fastingBS">
+                            <h3>Fasting BS</h3>
+                            <input type="number" name="fbs" id="fbs">
+                        </div>
+                    </div>
+                    <div class="para4 parameter">
+                        <div class="recg">
+                            <h3>Resting ECG</h3>
+                            <!-- <input type="text" name="recg" id="recg"> -->
+                             <select name="recg" id="recg">
+                                <option value="Normal">Normal</option>
+                                <option value="ST">ST</option>
+                                <option value="LVH">LVH</option>
+                             </select>
+                        </div>
+                        <div class="mhr">
+                            <h3>MAX HR</h3>
+                            <input type="number" name="mhr" id="mhr">
+                        </div>
+                    </div>
+                    <div class="para5 parameter">
+                        <div class="exang">
+                            <h3>Excercise Angina</h3>
+                            <!-- <input type="text" name="exang" id="exang"> -->
+                             <input type="radio" name="exang" id="YES" value="Y">Yes
+                             <input type="radio" name="exang" id="NO" value="N">No
+                        </div>
+                        <div class="op">
+                            <h3>Old Peak</h3>
+                            <input type="number" name="op" id="op">
+                        </div>
+
+                    </div>
+                    <div class="para6 parameter">
+                        <div class="st">
+
+                            <h3>ST Slope</h3>
+                            <!-- <input type="text" name="stslope" id="stslope"> -->
+                             <select name="stslope" id="stslope">
+                                <option value="Up">Up</option>
+                                <option value="Flat">Flat</option>
+                                <option value="Down">Down</option>
+                             </select>
+                        </div>
+                    </div>
+
+                    <div class="buttonDiv">
+                        <!-- <button>Submit</button> -->
+                        <input class="button" type="submit" value="Predict">
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+    <!-- <script src="../static/script/heart.js"></script> -->
+</body>
+</html>
