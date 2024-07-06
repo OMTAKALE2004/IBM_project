@@ -7,6 +7,19 @@
     <link rel="stylesheet" href="../static/styles/index.css">
 </head>
 <body>
+    <script>
+  window.watsonAssistantChatOptions = {
+    integrationID: "2ee25678-dc03-4833-a682-7328f18437af", // The ID of this integration.
+    region: "us-south", // The region your integration is hosted in.
+    serviceInstanceID: "b5533620-62ea-4284-9ed3-ed35b722a283", // The ID of your service instance.
+    onLoad: async (instance) => { await instance.render(); }
+  };
+  setTimeout(function(){
+    const t=document.createElement('script');
+    t.src="https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
+    document.head.appendChild(t);
+  });
+</script>
 <div class="main">
     <div class="background">
         <div class="cir"></div>
