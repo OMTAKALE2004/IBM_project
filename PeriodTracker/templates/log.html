@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Log</h2>
+<p>Next Period: {{ (user.start_date + timedelta(days=user.cycle_length)).strftime('%d %b') }}</p>
+<p>Next Fertile Period: {{ (user.start_date + timedelta(days=(user.cycle_length // 2))).strftime('%d %b') }}</p>
+{% endblock %}

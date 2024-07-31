@@ -1,0 +1,83 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+header {
+    background-color: #4B0082;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.title {
+    font-family: 'Brush Script MT', cursive;
+    font-size: 2.5em;
+}
+
+nav {
+    background-color: #800080;
+    padding: 10px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+main {
+    margin: 20px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label, input, button {
+    margin: 10px 0;
+}
+
+button {
+    background-color: #4B0082;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #800080;
+}
+
+.calendar {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.event {
+    margin: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    width: calc(25% - 10px);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.event.period {
+    background-color: #FFB6C1;
+}
+
+.event.ovulation {
+    background-color: #ADD8E6;
+}

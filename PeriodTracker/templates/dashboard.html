@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Welcome, {{ user.username }}</h2>
+<p>Cycle Length: {{ user.cycle_length }} days</p>
+<p>Period Length: {{ user.period_length }} days</p>
+<p>Start Date: {{ user.start_date.strftime('%d %b %Y') }}</p>
+<p><a href="{{ url_for('calendar_view') }}">View Calendar</a></p>
+{% endblock %}
