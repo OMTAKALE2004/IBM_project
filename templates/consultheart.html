@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hospital Finder</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map { height: 600px; width: 100%; }
+        #controls { margin: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Find Nearby Hospitals for Heart Disease</h1>
+    <div id="controls">
+        <input type="text" id="locationInput" placeholder="Enter a location" />
+        <button id="filterButton">Filter Hospitals</button>
+    </div>
+    <div id="map"></div>
+    
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <script>
+        // Initialize the map and set its view
+        var map = L.map('map').setView([20.5937, 78.9629], 5); // Centered on India
+
+        // Load and display tile layer on the map
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+        }).addTo(map);
+
+        // Sample data for hospitals
+        var hospitals = [
+    {"name": "All India Institute of Medical Sciences", "lat": 28.5672, "lng": 77.2100, "website": "https://www.aiims.edu/"},
+    {"name": "Fortis Memorial Research Institute", "lat": 28.4595, "lng": 77.0266, "website": "https://www.fortishealthcare.com/india/fortis-memorial-research-institute-gurugram-haryana"},
+    {"name": "Apollo Hospitals", "lat": 13.0115, "lng": 80.2182, "website": "https://www.apollohospitals.com/"},
+    {"name": "Christian Medical College", "lat": 12.9213, "lng": 79.1355, "website": "https://www.cmch-vellore.edu/"},
+    {"name": "Manipal Hospital", "lat": 12.9345, "lng": 77.6101, "website": "https://www.manipalhospitals.com/"},
+    {"name": "Narayana Health", "lat": 12.8406, "lng": 77.6796, "website": "https://www.narayanahealth.org/"},
+    {"name": "Medanta - The Medicity", "lat": 28.4295, "lng": 77.0400, "website": "https://www.medanta.org/"},
+    {"name": "Max Super Specialty Hospital", "lat": 28.5562, "lng": 77.1000, "website": "https://www.maxhealthcare.in/"},
+    {"name": "Kokilaben Dhirubhai Ambani Hospital", "lat": 19.1306, "lng": 72.8363, "website": "https://www.kokilabenhospital.com/"},
+    {"name": "Asian Heart Institute", "lat": 19.0167, "lng": 72.8258, "website": "https://www.asianheartinstitute.org/"},
+    {"name": "Sir Ganga Ram Hospital", "lat": 28.6434, "lng": 77.1909, "website": "https://www.sgrh.com/"},
+    {"name": "BLK Super Speciality Hospital", "lat": 28.6424, "lng": 77.1822, "website": "https://www.blkhospital.com/"},
+    {"name": "Artemis Hospital", "lat": 28.4247, "lng": 77.0557, "website": "https://www.artemishospitals.com/"},
+    {"name": "Care Hospitals", "lat": 17.4354, "lng": 78.4483, "website": "https://www.carehospitals.com/"},
+    {"name": "Fortis Escorts Heart Institute", "lat": 28.5632, "lng": 77.2799, "website": "https://www.fortisescorts.in/"},
+    {"name": "Global Hospitals", "lat": 17.4260, "lng": 78.4264, "website": "https://www.gleneaglesglobalhospitals.com/"},
+    {"name": "Sahyadri Hospitals", "lat": 18.5204, "lng": 73.8567, "website": "https://www.sahyadrihospital.com/"},
+    {"name": "Jaslok Hospital", "lat": 18.9668, "lng": 72.8043, "website": "https://www.jaslokhospital.net/"},
+    {"name": "Lilavati Hospital", "lat": 19.0501, "lng": 72.8295, "website": "https://www.lilavatihospital.com/"},
+    {"name": "Ruby Hall Clinic", "lat": 18.5290, "lng": 73.8750, "website": "https://www.rubyhall.com/"},
+    {"name": "Yashoda Hospitals", "lat": 17.4287, "lng": 78.4582, "website": "https://www.yashodahospitals.com/"},
+    {"name": "Wockhardt Hospitals", "lat": 18.9402, "lng": 72.8331, "website": "https://www.wockhardthospitals.com/"},
+    {"name": "Aster Medcity", "lat": 10.0186, "lng": 76.3034, "website": "https://www.astermedcity.com/"},
+    {"name": "Gleneagles Global Hospitals", "lat": 12.9917, "lng": 80.2201, "website": "https://www.gleneaglesglobalhospitals.com/"},
+    {"name": "Dr. B L Kapur Memorial Hospital", "lat": 28.6518, "lng": 77.1892, "website": "https://www.blkhospital.com/"},
+    {"name": "Nanavati Super Speciality Hospital", "lat": 19.1006, "lng": 72.8370, "website": "https://www.nanavatihospital.org/"},
+    {"name": "Hiranandani Hospital", "lat": 19.2367, "lng": 72.8431, "website": "https://www.hiranandanihospital.org/"},
+    {"name": "Sterling Hospitals", "lat": 23.0225, "lng": 72.5714, "website": "https://www.sterlinghospitals.com/"},
+    {"name": "Care Institute of Medical Sciences", "lat": 23.0305, "lng": 72.5086, "website": "https://www.cims.org/"},
+    {"name": "Continental Hospitals", "lat": 17.3700, "lng": 78.3825, "website": "https://www.continentalhospitals.com/"},
+    {"name": "Saifee Hospital", "lat": 18.9454, "lng": 72.8234, "website": "https://www.saifeehospital.com/"},
+    {"name": "Columbia Asia Hospital", "lat": 12.9592, "lng": 77.5946, "website": "https://www.columbiaindiahospitals.com/"},
+    {"name": "Sri Ramachandra Medical Centre", "lat": 13.0326, "lng": 80.2097, "website": "https://www.sriramachandra.edu.in/"},
+    {"name": "NIMS Hospital", "lat": 17.4193, "lng": 78.4480, "website": "https://www.nims.edu.in/"},
+    {"name": "Tata Memorial Hospital", "lat": 19.0069, "lng": 72.8424, "website": "https://tmc.gov.in/"},
+    {"name": "SevenHills Hospital", "lat": 19.1141, "lng": 72.8858, "website": "https://www.sevenhillshospital.com/"},
+    {"name": "AMRI Hospitals", "lat": 22.5726, "lng": 88.3639, "website": "https://www.amrihospitals.in/"},
+    {"name": "KIMS Hospitals", "lat": 17.4445, "lng": 78.3894, "website": "https://www.kimshospitals.com/"},
+    {"name": "SRM Institutes for Medical Science", "lat": 13.0878, "lng": 80.2095, "website": "https://www.sims.com/"},
+    {"name": "Sparsh Hospital", "lat": 12.9341, "lng": 77.5830, "website": "https://www.sparshhospital.com/"},
+    {"name": "Breach Candy Hospital", "lat": 18.9618, "lng": 72.8085, "website": "https://www.breachcandyhospital.org/"},
+    {"name": "Kovai Medical Center and Hospital", "lat": 11.0465, "lng": 77.0663, "website": "https://www.kmchhospitals.com/"},
+    {"name": "Sunshine Hospitals", "lat": 17.4296, "lng": 78.4358, "website": "https://www.sunshinehospitals.com/"},
+    {"name": "Fortis Hospital, Anandapur", "lat": 22.5363, "lng": 88.3851, "website": "https://www.fortishealthcare.com/india/fortis-hospital-anandapur-kolkata-west-bengal"},
+    {"name": "Indraprastha Apollo Hospitals", "lat": 28.5655, "lng": 77.2818, "website": "https://delhi.apollohospitals.com/"},
+    {"name": "Holy Family Hospital", "lat": 19.0667, "lng": 72.8333, "website": "https://www.holyfamilyhospital.in/"},
+    {"name": "BGS Gleneagles Global Hospitals", "lat": 12.9260, "lng": 77.6010, "website": "https://www.gleneaglesglobalhospitals.com/"},
+    {"name": "Kauvery Hospital", "lat": 13.0247, "lng": 80.2553, "website": "https://www.kauveryhospital.com/"},
+    {"name": "PSRI Hospital", "lat": 28.5177, "lng": 77.2505, "website": "https://www.psrihospital.com/"},
+    {"name": "Park Hospital", "lat": 28.4312, "lng": 77.1043, "website": "https://www.parkhospital.in/"},
+    {"name": "Paras Hospitals", "lat": 28.4655, "lng": 77.0622, "website": "https://www.parashospitals.com/"},
+    {"name": "Prashanth Super Speciality Hospital", "lat": 13.0353, "lng": 80.2422, "website": "https://www.prashanthhospitals.org/"},
+    {"name": "P.D. Hinduja Hospital", "lat": 19.0273, "lng": 72.8386, "website": "https://www.hindujahospital.com/"},
+    {"name": "Sundaram Medical Foundation", "lat": 13.0900, "lng": 80.2186, "website": "https://www.smfhospital.org/"},
+    {"name": "Bhagwan Mahaveer Jain Hospital", "lat": 12.9724, "lng": 77.5806, "website": "https://www.bmjh.org/"},
+    {"name": "S L Raheja Hospital", "lat": 19.0818, "lng": 72.8406, "website": "https://www.rahejahospital.com/"},
+    {"name": "Moolchand Medcity", "lat": 28.5721, "lng": 77.2279, "website": "https://www.moolchandhealthcare.com/"},
+    {"name": "Nova Specialty Hospitals", "lat": 12.9716, "lng": 77.5946, "website": "https://www.novahospitals.com/"},
+    {"name": "Primus Super Speciality Hospital", "lat": 28.5921, "lng": 77.1736, "website": "https://www.primushospital.com/"},
+    {"name": "KPC Medical College and Hospital", "lat": 22.5069, "lng": 88.3738, "website": "https://www.kpcmedicalcollege.org/"},
+    {"name": "Sancheti Hospital", "lat": 18.5286, "lng": 73.8567, "website": "https://www.sanchetihospital.org/"},
+    {"name": "Sahyadri Speciality Hospital", "lat": 18.5214, "lng": 73.8540, "website": "https://www.sahyadrihospital.com/"},
+    {"name": "Noble Hospital", "lat": 18.5089, "lng": 73.9260, "website": "https://www.noblehospitalspune.com/"},
+    {"name": "Command Hospital Air Force", "lat": 12.9345, "lng": 77.6101, "website": "https://indianairforce.nic.in/content/command-hospital-air-force-bangalore"},
+    {"name": "MIOT International", "lat": 13.0154, "lng": 80.2038, "website": "https://www.miotinternational.com/"},
+    {"name": "Vikram Hospital", "lat": 12.9716, "lng": 77.5946, "website": "https://www.vikramhospital.com/"},
+    {"name": "Metro Hospital and Heart Institute", "lat": 28.5355, "lng": 77.3910, "website": "https://www.metrohospitals.com/"},
+    {"name": "Rajiv Gandhi Cancer Institute and Research Centre", "lat": 28.6921, "lng": 77.1531, "website": "https://www.rgcirc.org/"},
+    {"name": "Lotus Hospitals for Women and Children", "lat": 17.3850, "lng": 78.4867, "website": "https://www.lotushospitals.in/"},
+    {"name": "Chinmaya Mission Hospital", "lat": 12.9716, "lng": 77.5946, "website": "https://www.cmhbangalore.com/"},
+    {"name": "Hope Children's Hospital", "lat": 17.3850, "lng": 78.4867, "website": "https://www.hopechildrenshospital.com/"},
+    {"name": "Medica Superspecialty Hospital", "lat": 22.5667, "lng": 88.3667, "website": "https://www.medicahospitals.in/"},
+    {"name": "Sal hospital & Medical Institute", "lat": 23.0305, "lng": 72.5086, "website": "https://www.salhospital.com/"},
+    {"name": "W Pratiksha Hospital", "lat": 28.4595, "lng": 77.0369, "website": "https://www.w-hospital.in/"},
+    {"name": "MGM Healthcare", "lat": 13.0810, "lng": 80.2717, "website": "https://www.mgmhealthcare.in/"},
+    {"name": "Rainbow Children's Hospital", "lat": 17.4255, "lng": 78.4500, "website": "https://www.rainbowhospitals.in/"},
+    {"name": "Cloudnine Hospital", "lat": 12.9716, "lng": 77.5946, "website": "https://www.cloudninecare.com/"},
+    {"name": "St. John's Medical College Hospital", "lat": 12.9352, "lng": 77.6184, "website": "https://www.stjohns.in/"},
+    {"name": "Bharti Hospital", "lat": 22.5726, "lng": 88.3639, "website": "https://www.bhartihospital.com/"},
+    {"name": "Grecian Super Speciality Hospital", "lat": 30.7046, "lng": 76.7179, "website": "https://www.grecianhospital.com/"},
+    {"name": "Fortis Hospital Mulund", "lat": 19.1718, "lng": 72.9422, "website": "https://www.fortishealthcare.com/india/fortis-hospital-mulund-mumbai-maharashtra"},
+    {"name": "Sunshine Global Hospitals", "lat": 22.3072, "lng": 73.1812, "website": "https://www.sunshineglobalhospitals.com/"},
+    {"name": "Sterling Wockhardt Hospital", "lat": 21.1702, "lng": 72.8311, "website": "https://www.sterlingwockhardthospital.com/"},
+    {"name": "MIOT Hospitals", "lat": 13.0155, "lng": 80.2038, "website": "https://www.miothospitals.com/"},
+    {"name": "Park Group of Hospitals", "lat": 28.4312, "lng": 77.1043, "website": "https://www.parkhospital.in/"},
+    {"name": "Columbia Asia Referral Hospital", "lat": 12.9716, "lng": 77.5946, "website": "https://www.columbiaindiahospitals.com/"},
+    {"name": "Fortis Hospital, Shalimar Bagh", "lat": 28.7166, "lng": 77.1608, "website": "https://www.fortishealthcare.com/india/fortis-hospital-shalimar-bagh-delhi"},
+    {"name": "Motherhood Hospital", "lat": 12.9716, "lng": 77.5946, "website": "https://www.motherhoodindia.com/"},
+    {"name": "Medicover Hospitals", "lat": 17.4977, "lng": 78.3958, "website": "https://www.medicoverhospitals.in/"},
+    {"name": "SevenHills Healthcare", "lat": 19.1141, "lng": 72.8858, "website": "https://www.sevenhillshospital.com/"},
+    {"name": "Aster CMI Hospital", "lat": 13.0531, "lng": 77.6059, "website": "https://www.asterbangalore.com/"},
+    {"name": "Anandaloke Multispeciality Hospital", "lat": 26.7271, "lng": 88.3953, "website": "https://www.anandaloke.com/"},
+    {"name": "Hope Children's Hospital, Hyderabad", "lat": 17.3850, "lng": 78.4867, "website": "https://www.hopechildrenshospital.com/"},
+    {"name": "MIMS Hospital", "lat": 11.2591, "lng": 75.7804, "website": "https://www.mimsindia.com/"},
+    {"name": "Mahatma Gandhi Medical College & Research Institute", "lat": 11.9239, "lng": 79.7993, "website": "https://www.mgmcri.ac.in/"},
+    {"name": "Chettinad Hospital & Research Institute", "lat": 12.8046, "lng": 80.1462, "website": "https://www.chettinadhealthcity.com/"},
+    {"name": "Sri Ramachandra Hospital", "lat": 13.0336, "lng": 80.2080, "website": "https://www.sriramachandra.edu.in/"},
+    {"name": "Shri Mata Vaishno Devi Narayana Superspeciality Hospital", "lat": 32.9801, "lng": 74.9282, "website": "https://www.narayanahealth.org/hospitals/jammu/shri-mata-vaishno-devi-narayana-superspeciality-hospital/"},
+    {"name": "Aakash Healthcare Super Speciality Hospital", "lat": 28.6139, "lng": 77.2090, "website": "https://www.aakashhealthcare.com/"},
+    {"name": "Akash Hospital", "lat": 26.9124, "lng": 75.7873, "website": "https://www.akashhospital.org/"},
+    {"name": "Prime Hospitals", "lat": 17.4564, "lng": 78.3790, "website": "https://www.primehospitals.com/"},
+    {"name": "Apollo Speciality Hospitals", "lat": 13.0846, "lng": 80.2171, "website": "https://www.apollohospitals.com/locations/india/chennai/ternanpet/"},
+    {"name": "Apollo Hospitals, Jubilee Hills", "lat": 17.4140, "lng": 78.4483, "website": "https://www.apollohospitals.com/locations/india/hyderabad/jubilee-hills/"},
+    {"name": "Apollo Hospitals, Bannerghatta", "lat": 12.9007, "lng": 77.6033, "website": "https://www.apollohospitals.com/locations/india/bengaluru/bannerghatta/"},
+    {"name": "Apollo Hospitals, Bhubaneswar", "lat": 20.2961, "lng": 85.8245, "website": "https://www.apollohospitals.com/locations/india/bhubaneswar/"},
+    {"name": "Aster Aadhar Hospital", "lat": 16.7032, "lng": 74.2433, "website": "https://www.asteraadhar.com/"},
+    {"name": "Aster Prime Hospital", "lat": 17.4401, "lng": 78.3967, "website": "https://www.asterprime.com/"},
+    {"name": "Hinduja Healthcare Surgical", "lat": 19.0644, "lng": 72.8327, "website": "https://www.hindujahospital.com/"},
+    {"name": "Jupiter Hospital", "lat": 19.2183, "lng": 72.9781, "website": "https://www.jupiterhospital.com/"},
+    {"name": "Kokilaben Hospital", "lat": 19.1306, "lng": 72.8363, "website": "https://www.kokilabenhospital.com/"},
+    {"name": "Manipal Hospitals, Dwarka", "lat": 28.5897, "lng": 77.0566, "website": "https://www.manipalhospitals.com/delhi/"},
+    {"name": "Metro Heart Institute", "lat": 28.6139, "lng": 77.2090, "website": "https://www.metrohospitalfaridabad.com/"},
+    {"name": "Narayana Institute of Cardiac Sciences", "lat": 12.8406, "lng": 77.6796, "website": "https://www.narayanahealth.org/heart-hospitals/bangalore-narayana-institute-cardiac-sciences-nh-health-city/"},
+    {"name": "Paras HMRI Hospital", "lat": 25.5941, "lng": 85.1376, "website": "https://www.parashospitals.com/"},
+    {"name": "Saket City Hospital", "lat": 28.5272, "lng": 77.2189, "website": "https://www.saketcityhospital.com/"},
+    {"name": "Sir H.N. Reliance Foundation Hospital and Research Centre", "lat": 18.9475, "lng": 72.8296, "website": "https://www.rfhospital.org/"},
+    {"name": "Sri Jayadeva Institute of Cardiovascular Sciences and Research", "lat": 12.9279, "lng": 77.6271, "website": "https://www.jayadevacardiology.com/"},
+    {"name": "St. Stephen's Hospital", "lat": 28.6654, "lng": 77.2247, "website": "https://www.ststephenshospital.org/"},
+    {"name": "United CIIGMA Hospital", "lat": 19.8762, "lng": 75.3433, "website": "https://www.unitedciigmahospital.com/"},
+    {"name": "Apollo Hospitals, Greams Road", "lat": 13.0736, "lng": 80.2524, "website": "https://www.apollohospitals.com/locations/india/chennai/greams-road/"},
+    {"name": "Bai Jerbai Wadia Hospital for Children", "lat": 18.9910, "lng": 72.8407, "website": "https://www.wadiahospitals.org/"},
+    {"name": "Bhandari Hospital & Research Centre", "lat": 26.9124, "lng": 75.7873, "website": "https://www.bhandarihospital.net/"},
+    {"name": "CARE Hospitals, Banjara Hills", "lat": 17.4239, "lng": 78.4503, "website": "https://www.carehospitals.com/"},
+    {"name": "Continental Hospitals, Gachibowli", "lat": 17.4311, "lng": 78.3683, "website": "https://www.continentalhospitals.com/"},
+    {"name": "Fortis Hospital, Cunningham Road", "lat": 12.9807, "lng": 77.6034, "website": "https://www.fortishealthcare.com/india/fortis-hospital-cunningham-road-bangalore-karnataka"},
+    {"name": "Fortis Hospital, Mulund", "lat": 19.1718, "lng": 72.9422, "website": "https://www.fortishealthcare.com/india/fortis-hospital-mulund-mumbai-maharashtra"},
+    {"name": "Global Hospitals, Parel", "lat": 19.0118, "lng": 72.8305, "website": "https://www.gleneaglesglobalhospitals.com/"},
+    {"name": "Hiranandani Hospital, Vashi", "lat": 19.1024, "lng": 73.0031, "website": "https://www.hiranandanihospital.org/"},
+    {"name": "KIMS Hospitals, Secunderabad", "lat": 17.4239, "lng": 78.4867, "website": "https://www.kimshospitals.com/"},
+    {"name": "Lotus Hospital for Women & Children", "lat": 17.4445, "lng": 78.4544, "website": "https://www.lotushospitals.in/"},
+    {"name": "Max Super Specialty Hospital, Vaishali", "lat": 28.6564, "lng": 77.3332, "website": "https://www.maxhealthcare.in/"},
+    {"name": "Medanta The Medicity, Gurgaon", "lat": 28.4295, "lng": 77.0400, "website": "https://www.medanta.org/"},
+    {"name": "Noble Hospital, Pune", "lat": 18.5089, "lng": 73.9260, "website": "https://www.noblehospitalspune.com/"},
+    {"name": "P.D. Hinduja Sindhi Hospital", "lat": 19.0173, "lng": 72.8582, "website": "https://www.hindujahospital.com/"},
+    {"name": "Rainbow Children's Hospital & Perinatal Centre", "lat": 17.4239, "lng": 78.4867, "website": "https://www.rainbowhospitals.in/"},
+    {"name": "Ramaiah Memorial Hospital", "lat": 12.9716, "lng": 77.5946, "website": "https://www.msrmh.com/"},
+    {"name": "S.L. Raheja Hospital, Mahim", "lat": 19.0436, "lng": 72.8430, "website": "https://www.rahejahospital.com/"},
+    {"name": "Sunshine Global Hospital, Vadodara", "lat": 22.3072, "lng": 73.1812, "website": "https://www.sunshineglobalhospitals.com/"},
+    {"name": "Sushrut Hospital and Research Centre", "lat": 19.0760, "lng": 72.8777, "website": "https://www.sushruthospital.com/"},
+    {"name": "Wockhardt Hospitals, Mumbai Central", "lat": 18.9718, "lng": 72.8194, "website": "https://www.wockhardthospitals.com/"},
+    {"name": "Yashoda Hospital, Somajiguda", "lat": 17.4239, "lng": 78.4867, "website": "https://www.yashodahospitals.com/"},
+    {"name": "Apollo Hospitals, Bengaluru", "lat": 12.9716, "lng": 77.5946, "website": "https://www.apollohospitals.com/locations/india/bengaluru/"},
+    {"name": "Apollo Hospitals, Chennai", "lat": 13.0827, "lng": 80.2707, "website": "https://www.apollohospitals.com/locations/india/chennai/"},
+    {"name": "Apollo Hospitals, Hyderabad", "lat": 17.3850, "lng": 78.4867, "website": "https://www.apollohospitals.com/locations/india/hyderabad/"},
+    {"name": "Artemis Hospital, Gurugram", "lat": 28.4595, "lng": 77.0266, "website": "https://www.artemishospitals.com/"},
+    {"name": "Aster MIMS, Calicut", "lat": 11.2588, "lng": 75.7804, "website": "https://www.astermims.com/"},
+    {"name": "Bharati Vidyapeeth Medical College and Hospital", "lat": 18.4594, "lng": 73.8501, "website": "https://www.bvuniversity.edu.in/medical-college-pune/"},
+    {"name": "Breach Candy Hospital Trust", "lat": 18.9718, "lng": 72.8093, "website": "https://www.breachcandyhospital.org/"},
+    {"name": "Dr. L.H. Hiranandani Hospital", "lat": 19.1306, "lng": 72.8484, "website": "https://www.hiranandanihospital.org/"},
+    {"name": "Global Hospitals, Hyderabad", "lat": 17.3850, "lng": 78.4867, "website": "https://www.gleneaglesglobalhospitals.com/"},
+    {"name": "Kohinoor Hospital", "lat": 19.0760, "lng": 72.8777, "website": "https://www.kohinoorhospitals.in/"},
+    {"name": "Max Super Speciality Hospital, Saket", "lat": 28.5272, "lng": 77.2195, "website": "https://www.maxhealthcare.in/"},
+    {"name": "Narayana Hrudayalaya, Bengaluru", "lat": 12.9716, "lng": 77.5946, "website": "https://www.narayanahealth.org/"},
+    {"name": "Narayana Multispeciality Hospital, Jaipur", "lat": 26.9124, "lng": 75.7873, "website": "https://www.narayanahealth.org/"},
+    {"name": "Ruby Hall Clinic, Pune", "lat": 18.5204, "lng": 73.8567, "website": "https://www.rubyhall.com/"},
+    {"name": "SevenHills Hospital, Mumbai", "lat": 19.1141, "lng": 72.8858, "website": "https://www.sevenhillshospital.com/"},
+    {"name": "Sir Ganga Ram Hospital", "lat": 28.6505, "lng": 77.1907, "website": "https://www.sgrh.com/"},
+    {"name": "Sri Ramachandra Medical Centre", "lat": 13.0336, "lng": 80.2080, "website": "https://www.sriramachandra.edu.in/"},
+    {"name": "Sunshine Hospital, Hyderabad", "lat": 17.3850, "lng": 78.4867, "website": "https://www.sunshinehospitals.com/"},
+    {"name": "Tata Memorial Hospital", "lat": 19.0244, "lng": 72.8422, "website": "https://www.tmc.gov.in/"},
+    {"name": "The Mission Hospital, Durgapur", "lat": 23.5475, "lng": 87.2893, "website": "https://www.themissionhospital.in/"},
+    {"name": "Wockhardt Hospital, Mumbai Central", "lat": 18.9718, "lng": 72.8194, "website": "https://www.wockhardthospitals.com/"},
+    {"name": "Ahalia Foundation Eye Hospital", "lat": 10.7867, "lng": 76.6548, "website": "https://www.afeh.org/"},
+    {"name": "Asian Heart Institute", "lat": 19.0176, "lng": 72.8416, "website": "https://www.asianheartinstitute.org/"},
+    {"name": "Ayushman Hospital & Health Services", "lat": 28.6139, "lng": 77.2090, "website": "https://www.ayushmanhospitals.com/"},
+    {"name": "Balaji Dental and Craniofacial Hospital", "lat": 13.0827, "lng": 80.2707, "website": "https://www.smbalaji.com/"},
+    {"name": "Bhagwan Mahaveer Jain Hospital", "lat": 12.9716, "lng": 77.5946, "website": "https://www.bmjh.org/"},
+    {"name": "Bharati Hospital & Research Centre", "lat": 18.4594, "lng": 73.8501, "website": "https://www.bharatihospital.com/"},
+    {"name": "Bharati Vidyapeeth Deemed University Medical College", "lat": 18.5074, "lng": 73.8076, "website": "https://www.bvuniversity.edu.in/medical-college-pune/"},
+    {"name": "BLK Super Speciality Hospital", "lat": 28.6328, "lng": 77.2206, "website": "https://www.blkhospital.com/"},
+    {"name": "Breach Candy Hospital Trust", "lat": 18.9718, "lng": 72.8149, "website": "https://www.breachcandyhospital.org/"},
+    {"name": "Care Hospitals, Bhubaneswar", "lat": 20.2961, "lng": 85.8245, "website": "https://www.carehospitals.com/"},
+    {"name": "Christian Medical College and Hospital", "lat": 13.0846, "lng": 80.2171, "website": "https://www.cmch-vellore.edu/"},
+    {"name": "Columbia Asia Hospital, Mysore", "lat": 12.2958, "lng": 76.6394, "website": "https://www.columbiaindiahospitals.com/"},
+    {"name": "Dharamshila Narayana Superspeciality Hospital", "lat": 28.5305, "lng": 77.2432, "website": "https://www.narayanahealth.org/"},
+    {"name": "Dr. B.L. Kapur Memorial Hospital", "lat": 28.6505, "lng": 77.1907, "website": "https://www.blkhospital.com/"},
+    {"name": "Dr. D.Y. Patil Medical College, Hospital and Research Centre", "lat": 18.6017, "lng": 73.7700, "website": "https://medical.dpu.edu.in/"},
+    {"name": "Fortis Escorts Heart Institute and Research Centre", "lat": 28.5355, "lng": 77.3910, "website": "https://www.fortisescorts.in/"},
+    {"name": "Fortis Malar Hospital", "lat": 13.0265, "lng": 80.2797, "website": "https://www.fortismalar.com/"},
+    {"name": "Fortis Memorial Research Institute", "lat": 28.4595, "lng": 77.0292, "website": "https://www.fmri.in/"},
+    {"name": "Fortis Hospital, Anandapur", "lat": 22.5726, "lng": 88.3639, "website": "https://www.fortishealthcare.com/"},
+    {"name": "Fortis Hospital, Kalyan", "lat": 19.2431, "lng": 73.1355, "website": "https://www.fortishealthcare.com/"},
+    {"name": "GKNM Hospital", "lat": 11.0168, "lng": 76.9558, "website": "https://www.gknmhospital.org/"},
+    {"name": "Goyal Hospital and Research Centre", "lat": 26.9124, "lng": 75.7873, "website": "https://www.goyalhospital.com/"},
+    {"name": "Holy Family Hospital", "lat": 19.0734, "lng": 72.8355, "website": "https://www.holyfamilyhospitalbandra.com/"},
+    {"name": "Indraprastha Apollo Hospitals", "lat": 28.5162, "lng": 77.2066, "website": "https://delhi.apollohospitals.com/"},
+    {"name": "Jupiter Hospital, Thane", "lat": 19.2183, "lng": 72.9781, "website": "https://www.jupiterhospital.com/"},
+    {"name": "Kailash Hospital and Heart Institute", "lat": 28.6139, "lng": 77.2090, "website": "https://www.kailashhealthcare.com/"},
+    {"name": "King George's Medical University", "lat": 26.8467, "lng": 80.9462, "website": "https://www.kgmu.org/"},
+    {"name": "Lilavati Hospital and Research Centre", "lat": 19.0166, "lng": 72.8289, "website": "https://www.lilavatihospital.com/"},
+    {"name": "Malar Hospital", "lat": 13.0265, "lng": 80.2797, "website": "https://www.fortismalar.com/"},
+    {"name": "MGM Healthcare", "lat": 13.0827, "lng": 80.2707, "website": "https://www.mgmhealthcare.in/"},
+    {"name": "Narayana Health City", "lat": 12.9702, "lng": 77.6408, "website": "https://www.narayanahealth.org/"},
+    {"name": "Noble Hospital", "lat": 18.5089, "lng": 73.9260, "website": "https://www.noblehospitalspune.com/"},
+    {"name": "Rajiv Gandhi Cancer Institute and Research Centre", "lat": 28.6505, "lng": 77.1907, "website": "https://www.rgcirc.org/"},
+    {"name": "Ruby General Hospital", "lat": 22.5111, "lng": 88.3905, "website": "https://www.rubyhospital.com/"},
+    {"name": "Saifee Hospital", "lat": 18.9543, "lng": 72.8235, "website": "https://www.saifeehospital.com/"},
+    {"name": "Sankara Nethralaya", "lat": 13.0810, "lng": 80.2124, "website": "https://www.sankaranethralaya.org/"},
+    {"name": "Sree Chitra Tirunal Institute for Medical Sciences & Technology", "lat": 8.5241, "lng": 76.9366, "website": "https://www.sctimst.ac.in/"},
+    {"name": "St. John's Medical College Hospital", "lat": 12.9352, "lng": 77.6142, "website": "https://www.stjohns.in/"},
+    {"name": "Sterling Hospital", "lat": 23.0225, "lng": 72.5714, "website": "https://www.sterlinghospitals.com/"},
+    {"name": "Tata Main Hospital", "lat": 22.8046, "lng": 86.2029, "website": "https://www.tatamainhospital.com/"},
+    {"name": "The Heart Centre", "lat": 28.7041, "lng": 77.1025, "website": "https://www.theheartcentre.in/"},
+    {"name": "Thyrocare Technologies Limited", "lat": 19.2183, "lng": 72.9781, "website": "https://www.thyrocare.com/"},
+    {"name": "Yashoda Hospitals, Secunderabad", "lat": 17.4294, "lng": 78.4975, "website": "https://www.yashodahospitals.com/"}
+]
+
+
+        // Function to filter hospitals based on a location
+        function filterHospitals(location) {
+            var geocoder = L.Control.Geocoder.nominatim();
+            geocoder.geocode(location, function(results) {
+                if (results.length > 0) {
+                    var latlng = results[0].center;
+                    var radius = 50; // Radius in kilometers
+                    var filteredHospitals = hospitals.filter(function(hospital) {
+                        var distance = map.distance(latlng, L.latLng(hospital.lat, hospital.lng)) / 1000;
+                        return distance <= radius;
+                    });
+                    showHospitals(filteredHospitals);
+                    map.setView(latlng, 10);
+                } else {
+                    alert('Location not found!');
+                }
+            });
+        }
+
+        // Function to display hospitals on the map
+        function showHospitals(hospitals) {
+            L.layerGroup().addTo(map); // Clear previous markers
+            hospitals.forEach(function(hospital) {
+                var marker = L.marker([hospital.lat, hospital.lng]).addTo(map);
+                marker.bindPopup(`<b>${hospital.name}</b><br><a href="${hospital.website}" target="_blank">${hospital.website}</a>`);
+            });
+        }
+
+        // Add event listener to filter button
+        document.getElementById('filterButton').addEventListener('click', function() {
+            var location = document.getElementById('locationInput').value;
+            if (location) {
+                filterHospitals(location);
+            } else {
+                alert('Please enter a location');
+            }
+        });
+
+        // Initially show all hospitals
+        showHospitals(hospitals);
+    </script>
+</body>
+</html>

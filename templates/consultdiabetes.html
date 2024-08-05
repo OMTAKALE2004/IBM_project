@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diabetes Hospital Finder</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map { height: 600px; width: 100%; }
+        #controls { margin: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Find Nearby Diabetes Hospitals</h1>
+    <div id="controls">
+        <input type="text" id="locationInput" placeholder="Enter a location" />
+        <button id="filterButton">Filter Hospitals</button>
+    </div>
+    <div id="map"></div>
+    
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <script>
+        // Initialize the map and set its view
+        var map = L.map('map').setView([20.5937, 78.9629], 5); // Centered on India
+
+        // Load and display tile layer on the map
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+        }).addTo(map);
+
+        // Data for diabetes hospitals
+        var hospitals = [
+            {"name": "Dr. Mohan's Diabetes Specialities Centre, Chennai", "lat": 13.0827, "lng": 80.2707, "website": "https://www.drmohans.com/"},
+            {"name": "M.V. Hospital for Diabetes, Chennai", "lat": 13.0674, "lng": 80.2614, "website": "https://www.mvdiabetes.com/"},
+            {"name": "Diabetes Care & Research Centre, Lucknow", "lat": 26.8467, "lng": 80.9462, "website": "https://www.diabetescare.com/"},
+            {"name": "Diabetes Endocrine Nutrition Management and Research Centre (DENMARC), Mumbai", "lat": 19.0760, "lng": 72.8777, "website": "https://www.denmrc.com/"},
+            {"name": "Jothydev's Diabetes Research Center, Trivandrum", "lat": 8.5241, "lng": 76.9366, "website": "https://www.jothydev.net/"},
+            {"name": "Diacon Hospital, Bangalore", "lat": 12.9716, "lng": 77.5946, "website": "https://www.diaconhospital.com/"},
+            {"name": "Jain Hospital, Bangalore", "lat": 12.9716, "lng": 77.5946, "website": "https://www.jainhospital.in/"},
+            {"name": "Diabetes Thyroid Hormone Center, Hyderabad", "lat": 17.3850, "lng": 78.4867, "website": "https://www.diabetesthyroidhormone.com/"},
+            {"name": "The Bangalore Diabetes Centre, Bangalore", "lat": 12.9716, "lng": 77.5946, "website": "https://www.bangaloredc.com/"},
+            {"name": "Diabetes Care & Research Centre, Delhi", "lat": 28.7041, "lng": 77.1025, "website": "https://www.diabetescare.com/"},
+            {"name": "Apollo Sugar Clinics, Hyderabad", "lat": 17.3850, "lng": 78.4867, "website": "https://www.apollosugar.com/"},
+            {"name": "Swasthya Diabetes Care, Surat", "lat": 21.1702, "lng": 72.8311, "website": "https://www.swasthyadiabetes.com/"},
+            {"name": "Chennai Diabetes Care and Research Centre, Chennai", "lat": 13.0827, "lng": 80.2707, "website": "https://www.chennaidiabetes.com/"},
+            {"name": "Diabetes and Endocrinology Clinic, Kolkata", "lat": 22.5726, "lng": 88.3639, "website": "https://www.diabetesendoclinic.com/"},
+            {"name": "Mumbai Diabetes Research Centre, Mumbai", "lat": 19.0760, "lng": 72.8777, "website": "https://www.mumbaidiabetes.com/"},
+            {"name": "Jothydev’s Diabetes Research Centre, Kochi", "lat": 9.9312, "lng": 76.2673, "website": "https://www.jothydev.net/"},
+            {"name": "Madras Diabetes Research Foundation, Chennai", "lat": 13.0674, "lng": 80.2614, "website": "https://www.mdrf.in/"},
+            {"name": "Diabetes Specialty Center, Pune", "lat": 18.5204, "lng": 73.8567, "website": "https://www.diabetesspecialty.com/"},
+            {"name": "Asha Diabetes Centre, Coimbatore", "lat": 11.0168, "lng": 76.9558, "website": "https://www.ashadiabetes.com/"},
+            {"name": "Diabetes Care Centre, Jaipur", "lat": 26.9124, "lng": 75.7873, "website": "https://www.diabetescarejaipur.com/"},
+            {"name": "Dr. A. Ramachandran’s Diabetes Hospitals, Chennai", "lat": 13.0674, "lng": 80.2614, "website": "https://www.drmohans.com/"},
+            {"name": "Diabetes Research Centre, Erode", "lat": 11.3410, "lng": 77.7172, "website": "https://www.drmohans.com/"},
+            {"name": "LifeSpan Diabetes Clinics, Delhi", "lat": 28.7041, "lng": 77.1025, "website": "https://www.lifespanindia.com/"},
+            {"name": "Diabetes Care Foundation, Lucknow", "lat": 26.8467, "lng": 80.9462, "website": "https://www.diabetescare.com/"},
+            {"name": "Diabetes and Endocrine Clinic, Bhubaneswar", "lat": 20.2961, "lng": 85.8245, "website": "https://www.diabetesendo.com/"},
+            {"name": "Sai Diabetes Centre, Coimbatore", "lat": 11.0168, "lng": 76.9558, "website": "https://www.saidiabetes.com/"},
+            {"name": "Dr. V. Mohan's Diabetes Specialities Centre, Hyderabad", "lat": 17.3850, "lng": 78.4867, "website": "https://www.drmohans.com/"},
+            {"name": "Excel Care Hospitals, Guwahati", "lat": 26.1445, "lng": 91.7362, "website": "https://www.excelcarehospitals.com/"},
+            {"name": "Swasthya Diabetes Care, Ahmedabad", "lat": 23.0225, "lng": 72.5714, "website": "https://www.swasthyadiabetes.com/"},
+            {"name": "Ramanand Diabetes Centre, Pune", "lat": 18.5204, "lng": 73.8567, "website": "https://www.ramananddiabetes.com/"},
+            {"name": "Lakeshore Diabetes Centre, Kochi", "lat": 9.9312, "lng": 76.2673, "website": "https://www.lakeshorehospital.com/"},
+            {"name": "Dr. Thirugnanam Diabetes Centre, Chennai", "lat": 13.0827, "lng": 80.2707, "website": "https://www.drthirugnanam.com/"},
+            {"name": "Diabetes Care Centre, Nagpur", "lat": 21.1458, "lng": 79.0882, "website": "https://www.diabetescarenagpur.com/"},
+            {"name": "Swasthya Diabetes Care, Vadodara", "lat": 22.3072, "lng": 73.1812, "website": "https://www.swasthyadiabetes.com/"},
+            {"name": "Diabetes and Hormone Care, Mysore", "lat": 12.2958, "lng": 76.6394, "website": "https://www.diabetesandhormone.com/"},
+            {"name": "Swasthya Diabetes Care, Rajkot", "lat": 22.3039, "lng": 70.8022, "website": "https://www.swasthyadiabetes.com/"},
+            {"name": "Dr. Mohan's Diabetes Specialities Centre, Bangalore", "lat": 12.9716, "lng": 77.5946, "website": "https://www.drmohans.com/"},
+            {"name": "Diabetes Centre, Trichy", "lat": 10.7905, "lng": 78.7047, "website": "https://www.diabetescaretrichy.com/"},
+            {"name": "H.V. Desai Diabetes Centre, Pune", "lat": 18.5204, "lng": 73.8567, "website": "https://www.hvdesaidiabetes.com/"},
+            {"name": "Dr. Mohan's Diabetes Specialities Centre, Pune", "lat": 18.5204, "lng": 73.8567, "website": "https://www.drmohans.com/"},
+            {"name": "Diabetes Research and Wellness Foundation, Delhi", "lat": 28.7041, "lng": 77.1025, "website": "https://www.drwf.org.in/"},
+            {"name": "Diabetes Care Centre, Bhopal", "lat": 23.2599, "lng": 77.4126, "website": "https://www.diabetescarebhopal.com/"},
+            {"name": "Dr. Mohan's Diabetes Specialities Centre, Coimbatore", "lat": 11.0168, "lng": 76.9558, "website": "https://www.drmohans.com/"},
+            {"name": "Swasthya Diabetes Care, Indore", "lat": 22.7196, "lng": 75.8577, "website": "https://www.swasthyadiabetes.com/"},
+            {"name": "Dr. Mohan's Diabetes Specialities Centre, Chandigarh", "lat": 30.7333, "lng": 76.7794, "website": "https://www.drmohans.com/"},
+            {"name": "Diabetes and Thyroid Clinic, Lucknow", "lat": 26.8467, "lng": 80.9462, "website": "https://www.diabetesthyroidclinic.com/"},
+            {"name": "Diabetes Care Centre, Patna", "lat": 25.5941, "lng": 85.1376, "website": "https://www.diabetescarepatna.com/"},
+            {"name": "Swasthya Diabetes Care, Jabalpur", "lat": 23.1815, "lng": 79.9864, "website": "https://www.swasthyadiabetes.com/"},
+            {"name": "Diabetes Centre, Ranchi", "lat": 23.3441, "lng": 85.3096, "website": "https://www.diabetescarecentre.com/"},
+            {"name": "Dr. Mohan's Diabetes Specialities Centre, Jaipur", "lat": 26.9124, "lng": 75.7873, "website": "https://www.drmohans.com/"},
+        ];
+
+        // Add markers to the map
+        hospitals.forEach(function(hospital) {
+            var marker = L.marker([hospital.lat, hospital.lng]).addTo(map);
+            marker.bindPopup("<b>" + hospital.name + "</b><br><a href='" + hospital.website + "' target='_blank'>" + hospital.website + "</a>");
+        });
+
+        // Add geocoder control to the map
+        var geocoder = L.Control.Geocoder.nominatim();
+        var geocoderControl = L.Control.geocoder({
+            query: 'India',
+            placeholder: 'Search for a location...',
+            defaultMarkGeocode: false
+        }).addTo(map);
+
+        // Geocode input location and filter hospitals
+        document.getElementById('filterButton').addEventListener('click', function() {
+            var locationInput = document.getElementById('locationInput').value;
+            geocoder.geocode(locationInput, function(results) {
+                if (results.length > 0) {
+                    var latLng = results[0].center;
+                    map.setView(latLng, 10);
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>

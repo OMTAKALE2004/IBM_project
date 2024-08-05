@@ -130,10 +130,15 @@ def resultheart():
     percent = request.args.get('percent')
     return render_template('resultheart.html', prediction=prediction,percent=percent)
 
-@app.route('/consult.html')
+@app.route('/consultdiabetes.html')
 def consult():
-    return render_template('consult.html')
+    return render_template('consultdiabetes.html')
+
+@app.route('/consultheart.html')
+def consult1():
+    return render_template('consultheart.html')
 
 
-# if __name__ == '__main__':
-#     app.run(debug=True)
+
+if __name__ == '__main__':
+    app.run(debug=True)
