@@ -53,7 +53,7 @@ def predict():
         }]
     }
 
-    response_scoring = requests.post('https://us-south.ml.cloud.ibm.com/ml/v4/deployments/544c1e5f-d9da-43e3-ac00-d75aab80526e/predictions?version=2021-05-01', json=payload_scoring,
+    response_scoring = requests.post('https://us-south.ml.cloud.ibm.com/ml/v4/deployments/a83590fb-bd9e-4a30-8c64-eb9b8a7130fd/predictions?version=2021-05-01', json=payload_scoring,
     headers={'Authorization': 'Bearer ' + mltoken})
     # print("Scoring response")
     # print(response_scoring.json())
@@ -115,7 +115,7 @@ def predictt():
             "values": [[f2,f1,f3,f4,f5,f6,f7,f8,f9,f10,f11]]
         }]
     }
-    response_scoring = requests.post('https://us-south.ml.cloud.ibm.com/ml/v4/deployments/4e754c34-054e-4355-b40c-7f3df0cb64df/predictions?version=2021-05-01', json=payload_scoring,
+    response_scoring = requests.post('https://us-south.ml.cloud.ibm.com/ml/v4/deployments/8d9e20cc-6969-4b89-a463-f8fac88f4bfa/predictions?version=2021-05-01', json=payload_scoring,
     headers={'Authorization': 'Bearer ' + mltoken})
     print("Scoring response")
     print(response_scoring.json())
