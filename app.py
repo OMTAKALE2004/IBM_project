@@ -61,13 +61,14 @@ def predict():
     # print(prediction)
     error=prediction['trace']
     # print(f"erro{error}")
+    
     if 'predictions' in prediction:
         print(prediction['predictions'])
         percent = round(prediction['predictions'][0]['values'][0][1][1] * 100, 2)
         prediction=int(prediction['predictions'][0]['values'][0][0])
-        print(percent,prediction)
-        prediction=[prediction,percent]
-        print(prediction[0])
+        # print(percent,prediction)
+        # prediction=[prediction,percent]
+        # print(prediction[0])
         return redirect(url_for('result', prediction=prediction,percent=percent))
     else:
         return redirect(url_for('result', prediction='-1'))
@@ -124,8 +125,10 @@ def predictt():
         percent = round(prediction['predictions'][0]['values'][0][1][1] * 100, 2)
         prediction=int(prediction['predictions'][0]['values'][0][0])
        
-    return redirect(url_for('resultheart', prediction=prediction,percent=percent))
-
+        return redirect(url_for('resultheart', prediction=prediction,percent=percent))
+    
+    else:
+        return  redirect(url_for('resultheart', prediction='-1'))
   
 @app.route('/resultheart')
 def resultheart():
@@ -143,5 +146,6 @@ def consult1():
 
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
