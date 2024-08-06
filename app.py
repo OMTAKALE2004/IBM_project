@@ -42,9 +42,7 @@ def predict():
     token_response = requests.post('https://iam.cloud.ibm.com/identity/token', data={"apikey":API_KEY, "grant_type": 'urn:ibm:params:oauth:grant-type:apikey'})
     mltoken = token_response.json()["access_token"]
 
-
     header = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + mltoken}
-    
     # Prepare the payload for scoring
     payload_scoring = {
         "input_data": [{
@@ -53,13 +51,13 @@ def predict():
         }]
     }
 
-    response_scoring = requests.post('https://us-south.ml.cloud.ibm.com/ml/v4/deployments/a83590fb-bd9e-4a30-8c64-eb9b8a7130fd/predictions?version=2021-05-01', json=payload_scoring,
+    response_scoring = requests.post('https://us-south.ml.cloud.ibm.com/ml/v4/deployments/537ce5db-9e3d-4bf0-a168-9e34671e75d7/predictions?version=2021-05-01', json=payload_scoring,
     headers={'Authorization': 'Bearer ' + mltoken})
     # print("Scoring response")
     # print(response_scoring.json())
     prediction=response_scoring.json()
-    # print(prediction)
-    error=prediction['trace']
+    print(prediction)
+    # error=prediction['trace']
     # print(f"erro{error}")
     
     if 'predictions' in prediction:
@@ -115,12 +113,12 @@ def predictt():
             "values": [[f2,f1,f3,f4,f5,f6,f7,f8,f9,f10,f11]]
         }]
     }
-    response_scoring = requests.post('https://us-south.ml.cloud.ibm.com/ml/v4/deployments/8d9e20cc-6969-4b89-a463-f8fac88f4bfa/predictions?version=2021-05-01', json=payload_scoring,
+    response_scoring = requests.post('https://us-south.ml.cloud.ibm.com/ml/v4/deployments/3ed6ca37-500a-45c3-9353-a103db415484/predictions?version=2021-05-01', json=payload_scoring,
     headers={'Authorization': 'Bearer ' + mltoken})
     print("Scoring response")
     print(response_scoring.json())
     prediction=response_scoring.json()
- 
+    
     if 'predictions' in prediction:
         percent = round(prediction['predictions'][0]['values'][0][1][1] * 100, 2)
         prediction=int(prediction['predictions'][0]['values'][0][0])
@@ -146,6 +144,6 @@ def consult1():
 
 
 
-# if __name__ == '__main__':
-#     app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)
 

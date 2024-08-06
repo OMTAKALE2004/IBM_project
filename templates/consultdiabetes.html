@@ -88,6 +88,7 @@
         hospitals.forEach(function(hospital) {
             var marker = L.marker([hospital.lat, hospital.lng]).addTo(map);
             marker.bindPopup("<b>" + hospital.name + "</b><br><a href='" + hospital.website + "' target='_blank'>" + hospital.website + "</a>");
+            // window.href = hospital.website
         });
 
         // Add geocoder control to the map
